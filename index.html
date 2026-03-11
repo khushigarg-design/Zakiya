@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>I love you zaki🥹🩷</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Dancing+Script:wght@600&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        /* Fixed Background */
+        #background-elements {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1; 
+            overflow: hidden;
+        }
+
+        .floating-item {
+            position: absolute;
+            bottom: -50px;
+            animation: floatUp linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes floatUp {
+            to { transform: translateY(-110vh) rotate(360deg); }
+        }
+
+        /* Interactive Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 25px;
+            width: 85%;
+            max-width: 350px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 { color: #d81b60; font-size: 24px; margin-bottom: 5px; }
+
+        /* The Love Jar */
+        .love-jar {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            cursor: pointer;
+            position: relative;
+            z-index: 100;
+            border: 2px solid rgba(255, 105, 135, 0.2);
+            transition: transform 0.1s;
+            user-select: none;
+        }
+        .love-jar:active { transform: scale(0.95); }
+        .jar-title { font-weight: 600; color: #ad1457; pointer-events: none; }
+        #reason-text { font-size: 15px; min-height: 45px; margin-top: 10px; display: flex; align-items: center; justify-content: center; pointer-events: none; transition: opacity 0.3s; }
+
+        /* Charge Heart */
+        .charge-container { display: inline-block; position: relative; font-size: 70px; color: rgba(255, 255, 255, 0.7); cursor: pointer; z-index: 100; user-select: none; touch-action: none; }
+        #heart-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; color: #ff3366; overflow: hidden; display: flex; align-items: flex-end; pointer-events: none; }
+
+        /* Bottom Row Items */
+        .interactive-row { display: flex; justify-content: space-around; align-items: center; margin-top: 15px; }
+        #surprise-box, #letter-icon { font-size: 45px; cursor: pointer; position: relative; z-index: 100; }
+        .wobble { animation: wobble 0.8s ease-in-out infinite; }
+        @keyframes wobble { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg) translateY(-5px); } }
+
+        /* Letter Modal Overlay */
+        #letter-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .letter-paper {
+            background: #fffafa;
+            width: 80%;
+            max-width: 320px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            text-align: center;
+            border: 1px solid #ff9a9e;
+        }
+
+        .letter-content {
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px;
+            line-height: 1.6;
+            color: #d81b60;
+        }
+
+        .close-letter {
+            margin-top: 20px;
+            background: #ff9a9e;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+        }
+
+        /* Heart Trail */
+        .trail-heart { position: fixed; pointer-events: none; z-index: 999; animation: fadeOut 0.8s forwards; }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px) scale(0.5); } }
+
+        .stickers { font-size: 30px; margin-top: 15px; display: flex; justify-content: center; gap: 15px; }
+        .bounce { animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+
+    <div id="background-elements"></div>
+
+    <div class="glass-card">
+        <h1>For Zaki 💖</h1>
+        
+        <div class="love-jar" id="jar">
+            <div class="jar-title">🫙 The Love Jar</div>
+            <div id="reason-text">Tap to see why I love you...</div>
+        </div>
+
+        <div class="charge-section">
+            <div class="charge-container" id="heart-container">
+                ♡ <div id="heart-fill">♥</div>
+            </div>
+            <p id="status" style="font-weight:600; color:#ad1457; margin:5px 0; font-size: 14px;">Hold for a Hug</p>
+        </div>
+
+        <div class="interactive-row">
+            <div id="surprise-box" class="wobble" title="Open Gift">🎁</div>
+            <div id="letter-icon" class="wobble" style="animation-delay: 0.3s;" title="Read Note">✉️</div>
+        </div>
+
+        <div class="stickers">
+            <span class="bounce">🫂</span>
+            <span>🧸</span>
+            <span class="bounce" style="animation-delay: 0.5s;">🥺</span>
+        </div>
+    </div>
+
+    <div id="letter-modal">
+        <div class="letter-paper">
+            <div class="letter-content">
+                Baby I'm always with you bure main bhi acche main bhi I love you bohot Sara aur main hamesha tujhe samjhungi tujhe samjhungi aur tera saath dungi loveee youuu a lott
+            </div>
+            <button class="close-letter" onclick="closeLetter()">Close 💖</button>
+        </div>
+    </div>
+
+    <script>
+        // Background Items
+        const bg = document.getElementById('background-elements');
+        const icons = ['🌸', '✨', '💖', '🤍'];
+        for(let i=0; i<20; i++) {
+            let d = document.createElement('div');
+            d.className = 'floating-item';
+            d.innerText = icons[Math.floor(Math.random()*icons.length)];
+            d.style.left = Math.random()*100+'vw';
+            d.style.animationDuration = (Math.random()*5+5)+'s';
+            bg.appendChild(d);
+        }
+
+        // Love Jar Logic
+        const reasons = [
+            "Your laugh is my favorite sound.",
+            "You make every day better.",
+            "I love the way you care for me.",
+            "You're my safest place.",
+            "I'm so proud of everything you do.",
+            "You're the best part of my day!",
+            "I just love being yours."
+        ];
+        let idx = 0;
+        document.getElementById('jar').addEventListener('click', () => {
+            const txt = document.getElementById('reason-text');
+            txt.style.opacity = 0;
+            setTimeout(() => {
+                txt.innerText = reasons[idx];
+                idx = (idx + 1) % reasons.length;
+                txt.style.opacity = 1;
+            }, 200);
+            confetti({ particleCount: 15, spread: 50, origin: { y: 0.6 }, colors: ['#ff9a9e'] });
+        });
+
+        // Gift Box Logic
+        document.getElementById('surprise-box').addEventListener('click', function() {
+            this.innerText = '🎉';
+            this.classList.remove('wobble');
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        });
+
+        // Letter Logic
+        const modal = document.getElementById('letter-modal');
+        document.getElementById('letter-icon').addEventListener('click', () => {
+            modal.style.display = 'flex';
+            setTimeout(() => modal.style.opacity = 1, 10);
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 }, colors: ['#d81b60', '#ff9a9e'] });
+        });
+        function closeLetter() {
+            modal.style.opacity = 0;
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        // Heart Trail
+        window.addEventListener('mousemove', (e) => spawn(e.clientX, e.clientY));
+        window.addEventListener('touchstart', (e) => spawn(e.touches[0].clientX, e.touches[0].clientY));
+        function spawn(x, y) {
+            const h = document.createElement('div');
+            h.className = 'trail-heart';
+            h.innerHTML = '❤️';
+            h.style.left = x + 'px';
+            h.style.top = y + 'px';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 800);
+        }
+
+        // Charge Heart Logic
+        const hc = document.getElementById('heart-container');
+        const hf = document.getElementById('heart-fill');
+        const st = document.getElementById('status');
+        let timer, val = 0;
+
+        function start(e) {
+            e.preventDefault();
+            timer = setInterval(() => {
+                val += 2;
+                hf.style.height = val + '%';
+                if(val >= 100) {
+                    clearInterval(timer);
+                    st.innerText = "HUG SENT! 🫂";
+                    confetti({ particleCount: 150, spread: 100 });
+                    if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 300]);
+                }
+            }, 50);
+        }
+        function stop() { 
+            clearInterval(timer); 
+            if(val < 100) { val = 0; hf.style.height = '0%'; st.innerText = "Hold for a Hug"; }
+        }
+
+        hc.addEventListener('mousedown', start);
+        window.addEventListener('mouseup', stop);
+        hc.addEventListener('touchstart', start);
+        window.addEventListener('touchend', stop);
+    </script>
+</body>
+  </html>
+  
